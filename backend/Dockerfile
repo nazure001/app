@@ -1,16 +1,17 @@
-# Gunakan image Python ringan
+# Gunakan Python versi ringan
 FROM python:3.9-slim
 
-# Set working directory
+# Set folder kerja
 WORKDIR /app
 
-# Copy requirements dan install dependencies
+# Copy requirements dan install
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Tips: Upgrade pip agar install lebih cepat
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy seluruh kode backend
 COPY . .
 
-# Hugging Face Spaces secara default menggunakan port 7860
-# Perintah untuk menyalakan server
+# Hugging Face menggunakan port 7860
 CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "7860"]
