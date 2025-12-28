@@ -252,7 +252,7 @@ export const generateLayers = (style, scale) => {
     mega: ['Foundation', 'Underground', 'Ground Floor', 'Mid Floors', 'Upper Floors', 'Roof', 'Spires', 'Landscaping', 'Interior']
   };
 
-  return baseLayers Map[scale] || baseLayersMap.medium;
+  return baseLayersMap[scale] || baseLayersMap.medium;
 };
 
 // Generate image prompt for pollinations.ai
