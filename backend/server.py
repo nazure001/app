@@ -4,129 +4,131 @@ from dotenv import load_dotenv
 import os
 import google.generativeai as genai
 import json
-import base64
-import io
 from starlette.middleware.cors import CORSMiddleware
+import urllib.parse
+import random
 
-# Load env vars
+# Load .env (untuk lokal, di HF nanti pakai Secrets)
 load_dotenv()
 
-# Configure Gemini
-GENAI_API_KEY = os.getenv("GEMINI_API_KEY")
-if not GENAI_API_KEY:
-    print("WARNING: GEMINI_API_KEY not found in env variables!")
+# Konfigurasi Gemini
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if not GEMINI_API_KEY:
+    print("WARNING: GEMINI_API_KEY belum diset!")
 
-genai.configure(api_key=GENAI_API_KEY)
+genai.configure(api_key=GEMINI_API_KEY)
 
 app = FastAPI()
 
-# CORS config (Agar frontend bisa akses)
+# Konfigurasi CORS (Agar Frontend bisa akses Backend)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Nanti ganti dengan URL Vercel Anda biar aman
+    allow_origins=["*"], # Mengizinkan semua akses (aman untuk publik API sederhana)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Models
+# Model Data Input
 class BuildRequest(BaseModel):
     idea: str
     style: str = "medieval"
     biome: str = "plains"
     scale: str = "medium"
 
-# --- HELPER: TEXT GENERATION ---
-def generate_concept_with_gemini(data: BuildRequest):
+def generate_gemini_concept(data: BuildRequest):
+    """
+    Fungsi ini meminta Gemini membuatkan konsep JSON dan prompt gambar.
+    """
     model = genai.GenerativeModel('gemini-1.5-flash')
     
+    # Prompt untuk Gemini
     prompt = f"""
-    You are a Minecraft Architect Expert. Create a detailed build concept JSON for:
+    Act as a professional Minecraft Architect. Create a detailed build concept for:
     Idea: {data.idea}
     Style: {data.style}
     Biome: {data.biome}
     Scale: {data.scale}
 
-    Output MUST be valid JSON only (no markdown code blocks) with this EXACT structure:
+    You MUST return ONLY valid JSON (no markdown formatting like ```json).
+    The JSON structure must be exactly like this:
     {{
         "title": "A Creative Title",
-        "description": "A short engaging description",
-        "difficulty": "Beginner/Intermediate/Expert",
+        "difficulty": "Beginner/Intermediate/Advanced",
         "estimatedTime": "e.g. 2-3 hours",
         "palette": {{
-            "main": ["Block1", "Block2"],
-            "accent": ["Block3", "Block4"],
-            "detail": ["Block5", "Block6"]
+            "main": ["Block Name 1", "Block Name 2"],
+            "accent": ["Block Name 3"],
+            "detail": ["Block Name 4"],
+            "lighting": ["Light Block 1"]
         }},
-        "layers": ["Foundation", "Frame", "Walls", "Roof", "Details"],
-        "tips": ["Tip 1", "Tip 2", "Tip 3"],
+        "layers": ["Step 1: Description", "Step 2: Description", "Step 3: Description"],
+        "tips": ["Pro tip 1", "Pro tip 2"],
         "features": ["Feature 1", "Feature 2"],
-        "image_prompt": "A highly detailed cinematic minecraft render of {data.idea}, {data.style} style, in {data.biome}, RTX on, 8k resolution, photorealistic textures"
+        "image_prompt": "A cinematic shot of minecraft {data.style} {data.idea} in {data.biome}, rtx on, 8k, photorealistic textures, dramatic lighting"
     }}
     """
     
-    response = model.generate_content(prompt)
-    
-    # Bersihkan response jika ada markdown ```json
-    text = response.text.replace("```json", "").replace("```", "").strip()
-    return json.loads(text)
-
-# --- HELPER: IMAGE GENERATION (IMAGEN) ---
-def generate_image_with_imagen(prompt_text):
-    # Catatan: Imagen 3 mungkin belum tersedia untuk semua akun free tier via API.
-    # Jika error, kita fallback ke Gemini Flash yang mendeskripsikan URL placeholder atau error handling.
     try:
-        # Gunakan model Imagen jika tersedia di akun Anda
-        # Jika belum punya akses Imagen via API, kode ini akan error dan masuk except.
-        # Alternatif: Gunakan 'gemini-pro-vision' tidak bisa generate image.
-        # Kita coba pattern standar Imagen via library google-generativeai
-        
-        # NOTE: Saat ini library python google-generativeai support imagen via:
-        # imagen_model = genai.ImageGenerationModel("imagen-3.0-generate-001")
-        # Tapi karena library sering update, pastikan di requirements terbaru.
-        
-        # SEMENTARA: Karena Imagen API sering berbayar/terbatas, 
-        # saya buat logic fallback yang aman. 
-        # Jika Anda punya akses Imagen, uncomment baris bawah:
-        
-        # model = genai.GenerativeModel("imagen-3.0-generate-001")
-        # result = model.generate_images(prompt=prompt_text, number_of_images=1)
-        # return "data:image/png;base64," + base64.b64encode(result.images[0].image_bytes).decode()
-
-        # JIKA BELUM PUNYA AKSES IMAGEN, kita pakai Pollinations tapi dengan prompt yang DI-OPTIMALKAN GEMINI
-        # Ini solusi paling aman agar gambar TETAP MUNCUL dan GRATIS tapi LEBIH BAGUS.
-        encoded_prompt = prompt_text.replace(" ", "%20")
-        return f"[https://image.pollinations.ai/prompt/](https://image.pollinations.ai/prompt/){encoded_prompt}?width=1024&height=768&nologo=true&seed=42"
-
+        response = model.generate_content(prompt)
+        # Bersihkan response dari format markdown jika ada
+        cleaned_text = response.text.replace("```json", "").replace("```", "").strip()
+        return json.loads(cleaned_text)
     except Exception as e:
-        print(f"Image Gen Error: {e}")
-        return "[https://via.placeholder.com/800x600?text=Image+Generation+Error](https://via.placeholder.com/800x600?text=Image+Generation+Error)"
+        print(f"Gemini Error: {e}")
+        # Fallback data jika Gemini gagal/limit
+        return {
+            "title": f"{data.style} {data.idea}",
+            "difficulty": "Intermediate",
+            "estimatedTime": "Unknown",
+            "palette": {"main": ["Oak Planks"], "accent": ["Cobblestone"], "detail": ["Glass"], "lighting": ["Torch"]},
+            "layers": ["Foundation", "Walls", "Roof"],
+            "tips": ["Try mixing blocks for texture."],
+            "features": ["Main structure"],
+            "image_prompt": f"Minecraft {data.style} {data.idea} in {data.biome} biome, cinematic"
+        }
+
+def generate_safe_image_url(prompt):
+    """
+    Fungsi ini membuat URL Pollinations yang AMAN dan VALID.
+    Masalah gambar tidak muncul biasanya karena URL mengandung spasi/karakter aneh.
+    """
+    # 1. Tambahkan seed acak agar gambar selalu berubah
+    seed = random.randint(1, 999999)
+    
+    # 2. Encode prompt (ganti spasi jadi %20, dll) -> KUNCI AGAR GAMBAR MUNCUL
+    encoded_prompt = urllib.parse.quote(prompt)
+    
+    # 3. Gunakan model 'flux' atau 'turbo' untuk hasil bagus & cepat
+    # Ukuran 1024x576 (16:9) cocok untuk cinematic view
+    return f"[https://image.pollinations.ai/prompt/](https://image.pollinations.ai/prompt/){encoded_prompt}?width=1024&height=576&nologo=true&seed={seed}&model=flux"
 
 @app.post("/api/generate")
 async def generate_build(request: BuildRequest):
-    try:
-        # 1. Generate Concept JSON
-        concept = generate_concept_with_gemini(request)
-        
-        # 2. Generate Image URL (Enhanced by Gemini Prompt)
-        # Jika Anda sudah beli akses Imagen Google, ganti fungsi helper di atas.
-        image_url = generate_image_with_imagen(concept['image_prompt'])
-        
-        # Gabungkan data
-        response_data = {
-            **concept,
-            "images": {
-                "cinematic": image_url,
-                "palette": image_url, # Sementara pakai gambar sama untuk hemat request
-                "angle": image_url,
-                "blueprint": image_url
-            }
+    # Tahap 1: Pakai Gemini untuk mikir konsep & bikin prompt gambar
+    concept_data = generate_gemini_concept(request)
+    
+    # Tahap 2: Pakai prompt dari Gemini untuk generate URL gambar
+    # Mengambil 'image_prompt' dari hasil Gemini, atau pakai ide user kalau error
+    prompt_for_image = concept_data.get("image_prompt", f"{request.style} {request.idea} minecraft build")
+    
+    # Generate 4 URL variasi (bisa dikembangkan biar beda-beda promptnya)
+    image_url_cinematic = generate_safe_image_url(prompt_for_image + ", cinematic view")
+    image_url_palette = generate_safe_image_url(prompt_for_image + ", flat lay block palette style")
+    image_url_angle = generate_safe_image_url(prompt_for_image + ", isometric view")
+    image_url_blueprint = generate_safe_image_url(prompt_for_image + ", blueprint schematic style blue background")
+    
+    # Tahap 3: Gabungkan data untuk dikirim ke Frontend
+    return {
+        **concept_data,
+        "images": {
+            "cinematic": image_url_cinematic,
+            "palette": image_url_palette,
+            "angle": image_url_angle,
+            "blueprint": image_url_blueprint
         }
-        return response_data
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    }
 
-@app.get("/api/status")
-async def status():
-    return {"status": "Backend Gemini Ready"}
+@app.get("/")
+def read_root():
+    return {"status": "Active", "engine": "Gemini + Hugging Face"}
