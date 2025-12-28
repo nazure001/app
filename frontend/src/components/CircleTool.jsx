@@ -21,26 +21,44 @@ const CircleTool = ({ circleConfig, setCircleConfig }) => {
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Set up canvas center
+    // --- MULAI PERBAIKAN AUTO-ZOOM ---
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    const blockSize = 20;
+    
+    // Hitung diameter lingkaran (ditambah padding 4 blok biar gak mepet pinggir)
+    const diameterBlocks = (radius * 2) + 1 + 4; 
+    
+    // Hitung ukuran blok agar pas di canvas 600px
+    // Math.floor agar garisnya tajam (pixel perfect)
+    let blockSize = Math.floor(canvas.width / diameterBlocks);
+    
+    // Batasi ukuran blok:
+    // Minimal 2px (biar radius 50 masih kelihatan)
+    // Maksimal 40px (biar radius 1 gak kegedean banget)
+    blockSize = Math.max(2, Math.min(40, blockSize));
+    // --- SELESAI PERBAIKAN ---
+
     const pixelRadius = radius * blockSize;
 
-    // Draw grid background
+    // Draw grid background (Logika Grid juga harus disesuaikan biar rapi)
     ctx.strokeStyle = '#374151';
     ctx.lineWidth = 0.5;
-    for (let x = 0; x <= canvas.width; x += blockSize) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, canvas.height);
-      ctx.stroke();
+    
+    // Grid dimulai dari tengah biar simetris saat di-zoom
+    // Grid Vertikal
+    for (let x = centerX; x <= canvas.width; x += blockSize) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
     }
-    for (let y = 0; y <= canvas.height; y += blockSize) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(canvas.width, y);
-      ctx.stroke();
+    for (let x = centerX; x >= 0; x -= blockSize) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+    }
+    
+    // Grid Horizontal
+    for (let y = centerY; y <= canvas.height; y += blockSize) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+    }
+    for (let y = centerY; y >= 0; y -= blockSize) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
     }
 
     // Draw circle blocks
