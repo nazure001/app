@@ -44,6 +44,7 @@ const AIGenerator = ({ concept, setConcept }) => {
   };
 
   const handleGenerate = async () => {
+    // 1. Validasi Input (Sama seperti sebelumnya)
     if (!idea.trim()) {
       toast({
         title: "Error",
@@ -53,66 +54,84 @@ const AIGenerator = ({ concept, setConcept }) => {
       return;
     }
 
+    // 2. Mulai Loading
     setIsGenerating(true);
 
     try {
-      // Generate concept data
-      const title = generateTitle(idea, style, biome);
-      const difficulty = calculateDifficulty(scale, style);
-      const layers = generateLayers(style, scale);
-      const palette = BIOME_PALETTES[biome];
-      const styleTouches = STYLE_TOUCHES[style];
+      // ⚠️ PENTING: GANTI URL DI BAWAH INI DENGAN LINK SPACE HUGGING FACE ANDA
+      // Pastikan ada akhiran '/api/generate'
+      // Contoh: https://nazure-minecraft-backend.hf.space/api/generate
+      const BACKEND_URL = "https://nazure02-minecraft-db.hf.space";
+      
+      console.log("Connecting to AI Server...");
 
-      const newConcept = {
-        idea,
-        style,
-        biome,
-        mood,
-        time,
-        scale,
-        title,
-        difficulty,
-        layers,
-        palette,
-        tips: styleTouches.tips,
-        features: styleTouches.features
-      };
+      // 3. Request ke Backend (Hugging Face + Gemini)
+      const response = await fetch(BACKEND_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          idea: idea,
+          style: style,
+          biome: biome,
+          scale: scale
+        })
+      });
 
-      // Generate prompts
-      const prompts = {
-        cinematic: generateImagePrompt(newConcept, 'cinematic'),
-        palette: generateImagePrompt(newConcept, 'palette'),
-        angle: generateImagePrompt(newConcept, 'angle'),
-        blueprint: generateImagePrompt(newConcept, 'blueprint')
-      };
+      if (!response.ok) {
+        throw new Error(`Server Error: ${response.status}`);
+      }
 
-      // Generate image URLs
-      const images = {
-        cinematic: generateImageURL(prompts.cinematic, 1001),
-        palette: generateImageURL(prompts.palette, 1002),
-        angle: generateImageURL(prompts.angle, 1003),
-        blueprint: generateImageURL(prompts.blueprint, 1004)
-      };
+      // 4. Terima Data Cerdas dari Gemini
+      const backendData = await response.json();
+      console.log("AI Data Received:", backendData);
 
-      newConcept.prompts = prompts;
-      newConcept.images = images;
-
-      // Simulate generation time for better UX
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      setConcept(newConcept);
+      // 5. Update State Aplikasi
+      // Kita memetakan (mapping) data JSON dari backend ke format yang dimengerti Frontend
+      setConcept({
+        // Data input user
+        idea: idea,
+        style: style,
+        biome: biome,
+        scale: scale,
+        mood: mood, // Tetap pakai mood dari frontend
+        time: time, // Tetap pakai time dari frontend
+        
+        // Data hasil pemikiran Gemini
+        title: backendData.title,
+        difficulty: backendData.difficulty,
+        layers: backendData.layers,
+        palette: backendData.palette,
+        tips: backendData.tips,
+        features: backendData.features,
+        
+        // Gambar yang sudah di-generate URL-nya oleh backend
+        images: backendData.images,
+        
+        // Simpan prompt asli untuk fitur "Copy Prompt"
+        prompts: { 
+            cinematic: backendData.image_prompt,
+            palette: backendData.image_prompt,
+            angle: backendData.image_prompt,
+            blueprint: backendData.image_prompt
+        }
+      });
 
       toast({
         title: "Generation Complete!",
-        description: `${title} has been generated successfully.`,
+        description: `${backendData.title} created by Gemini AI.`,
       });
+
     } catch (error) {
+      console.error("Generation Error:", error);
       toast({
         title: "Generation Failed",
-        description: "An error occurred. Please try again.",
+        description: "Could not connect to AI Server. Check if Hugging Face Space is Running.",
         variant: "destructive"
       });
     } finally {
+      // 6. Matikan Loading
       setIsGenerating(false);
     }
   };
