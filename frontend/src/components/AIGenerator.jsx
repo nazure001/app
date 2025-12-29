@@ -113,7 +113,7 @@ const AIGenerator = ({ concept, setConcept }) => {
         prompts: { 
             cinematic: basePrompt + ", cinematic view, detailed lighting, 8k render, photorealistic, voxel art, Camera angle: eye level serene, Epic composition",
             palette: basePrompt + ", flat lay block palette style, 8k, organized grid, white background, material breakdown, clean inventory view",
-            angle: basePrompt + ", Isometric technical drawing, 8k, schematic style, white background, 3d render, cute style, clear building details",
+            angle: basePrompt + ", Isometric technical drawing, 8k, schematic style, white background, 3d render, clear building details",
             blueprint: basePrompt + ", blueprint schematic style, 8k, blue background, technical drawing, white lines, top down view"
         }
       });
