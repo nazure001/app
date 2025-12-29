@@ -111,10 +111,10 @@ const AIGenerator = ({ concept, setConcept }) => {
         
         // ⬇️ PERBAIKAN DI SINI: Modifikasi prompt agar unik per tombol ⬇️
         prompts: { 
-            cinematic: basePrompt + ", cinematic view, detailed lighting, 8k render, photorealistic",
-            palette: basePrompt + ", flat lay block palette style, organized grid, white background, material breakdown",
-            angle: basePrompt + ", isometric view, 3d render, cute style, clear details, white background",
-            blueprint: basePrompt + ", blueprint schematic style, blue background, technical drawing, white lines, top down view"
+            cinematic: basePrompt + ", cinematic view, detailed lighting, 8k render, photorealistic, voxel art, Camera angle: eye level serene, Epic composition",
+            palette: basePrompt + ", flat lay block palette style, 8k, organized grid, white background, material breakdown, clean inventory view",
+            angle: basePrompt + ", Isometric technical drawing, 8k, schematic style, white background, 3d render, cute style, clear building details",
+            blueprint: basePrompt + ", blueprint schematic style, 8k, blue background, technical drawing, white lines, top down view"
         }
       });
 
