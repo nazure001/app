@@ -220,7 +220,7 @@ const AIGenerator = ({ concept, setConcept }) => {
                 <SelectTrigger className="bg-black/30 border-emerald-800/50 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-stone-900 border-emerald-800/50">
+                <SelectContent className="bg-stone-900 border-emerald-800/50 text-stone-200">
                   <SelectItem value="medieval">Medieval</SelectItem>
                   <SelectItem value="modern">Modern</SelectItem>
                   <SelectItem value="fantasy">Fantasy</SelectItem>
@@ -240,7 +240,7 @@ const AIGenerator = ({ concept, setConcept }) => {
                 <SelectTrigger className="bg-black/30 border-emerald-800/50 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-stone-900 border-emerald-800/50">
+                <SelectContent className="bg-stone-900 border-emerald-800/50 text-stone-200">
                   <SelectItem value="forest">Forest</SelectItem>
                   <SelectItem value="desert">Desert</SelectItem>
                   <SelectItem value="ocean">Ocean</SelectItem>
@@ -261,7 +261,7 @@ const AIGenerator = ({ concept, setConcept }) => {
                 <SelectTrigger className="bg-black/30 border-emerald-800/50 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-stone-900 border-emerald-800/50">
+                <SelectContent className="bg-stone-900 border-emerald-800/50 text-stone-200">
                   <SelectItem value="epic">Epic</SelectItem>
                   <SelectItem value="cozy">Cozy</SelectItem>
                   <SelectItem value="mystical">Mystical</SelectItem>
@@ -278,7 +278,7 @@ const AIGenerator = ({ concept, setConcept }) => {
                 <SelectTrigger className="bg-black/30 border-emerald-800/50 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-stone-900 border-emerald-800/50">
+                <SelectContent className="bg-stone-900 border-emerald-800/50 text-stone-200">
                   <SelectItem value="golden">Golden Hour</SelectItem>
                   <SelectItem value="sunrise">Sunrise</SelectItem>
                   <SelectItem value="night">Night</SelectItem>
@@ -295,7 +295,7 @@ const AIGenerator = ({ concept, setConcept }) => {
                 <SelectTrigger className="bg-black/30 border-emerald-800/50 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-stone-900 border-emerald-800/50">
+                <SelectContent className="bg-stone-900 border-emerald-800/50 text-stone-200">
                   <SelectItem value="small">Small</SelectItem>
                   <SelectItem value="medium">Medium</SelectItem>
                   <SelectItem value="large">Large</SelectItem>
