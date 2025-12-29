@@ -113,10 +113,10 @@ async def generate_build(request: BuildRequest):
     prompt_for_image = concept_data.get("image_prompt", f"{request.style} {request.idea} minecraft build")
     
     # Generate 4 URL variasi (bisa dikembangkan biar beda-beda promptnya)
-    image_url_cinematic = generate_safe_image_url(prompt_for_image + ", cinematic view")
-    image_url_palette = generate_safe_image_url(prompt_for_image + ", flat lay block palette style")
-    image_url_angle = generate_safe_image_url(prompt_for_image + ", isometric view")
-    image_url_blueprint = generate_safe_image_url(prompt_for_image + ", blueprint schematic style blue background")
+    image_url_cinematic = generate_safe_image_url(prompt_for_image + ", cinematic view, detailed lighting, 8k render, photorealistic, voxel art, Camera angle: eye level serene, Epic composition")
+    image_url_palette = generate_safe_image_url(prompt_for_image + ", flat lay block palette style, 8k, organized grid, white background, material breakdown, clean inventory view")
+    image_url_angle = generate_safe_image_url(prompt_for_image + ", Isometric technical drawing, 8k, schematic style, white background, 3d render, legends detail, clear building details")
+    image_url_blueprint = generate_safe_image_url(prompt_for_image + ", blueprint schematic style, 8k, blue background, technical drawing, white lines, top down view")
     
     # Tahap 3: Gabungkan data untuk dikirim ke Frontend
     return {
