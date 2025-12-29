@@ -61,7 +61,7 @@ const AIGenerator = ({ concept, setConcept }) => {
       // ⚠️ PENTING: GANTI URL DI BAWAH INI DENGAN LINK SPACE HUGGING FACE ANDA
       // Pastikan ada akhiran '/api/generate'
       // Contoh: https://nazure-minecraft-backend.hf.space/api/generate
-      const BACKEND_URL = "https://nazure02-minecraft-db.hf.space";
+      const BACKEND_URL = "https://nazure02-minecraft-db.hf.space/api/generate";
       
       console.log("Connecting to AI Server...");
 
