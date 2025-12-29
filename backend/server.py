@@ -85,7 +85,7 @@ def generate_gemini_concept(data: BuildRequest):
             "layers": ["Foundation", "Walls", "Roof"],
             "tips": ["Try mixing blocks for texture."],
             "features": ["Main structure"],
-            "image_prompt": f"Minecraft {data.style} {data.idea} in {data.biome} biome, cinematic"
+            "image_prompt": f"Minecraft {data.style} {data.idea} in {data.biome} biome"
         }
 
 def generate_safe_image_url(prompt):
