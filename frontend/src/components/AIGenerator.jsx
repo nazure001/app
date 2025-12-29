@@ -44,7 +44,7 @@ const AIGenerator = ({ concept, setConcept }) => {
   };
 
   const handleGenerate = async () => {
-    // 1. Validasi Input (Sama seperti sebelumnya)
+    // 1. Validasi Input
     if (!idea.trim()) {
       toast({
         title: "Error",
@@ -58,14 +58,12 @@ const AIGenerator = ({ concept, setConcept }) => {
     setIsGenerating(true);
 
     try {
-      // ⚠️ PENTING: GANTI URL DI BAWAH INI DENGAN LINK SPACE HUGGING FACE ANDA
-      // Pastikan ada akhiran '/api/generate'
-      // Contoh: https://nazure-minecraft-backend.hf.space/api/generate
+      // Pastikan URL ini sesuai dengan Hugging Face Space Anda yang aktif
       const BACKEND_URL = "https://nazure02-minecraft-db.hf.space/api/generate";
       
       console.log("Connecting to AI Server...");
 
-      // 3. Request ke Backend (Hugging Face + Gemini)
+      // 3. Request ke Backend
       const response = await fetch(BACKEND_URL, {
         method: 'POST',
         headers: {
@@ -86,17 +84,19 @@ const AIGenerator = ({ concept, setConcept }) => {
       // 4. Terima Data Cerdas dari Gemini
       const backendData = await response.json();
       console.log("AI Data Received:", backendData);
+      
+      // Ambil prompt dasar dari backend (misal: "A medieval castle in plains...")
+      const basePrompt = backendData.image_prompt;
 
-      // 5. Update State Aplikasi
-      // Kita memetakan (mapping) data JSON dari backend ke format yang dimengerti Frontend
+      // 5. Update State Aplikasi dengan Prompt Spesifik
       setConcept({
         // Data input user
         idea: idea,
         style: style,
         biome: biome,
         scale: scale,
-        mood: mood, // Tetap pakai mood dari frontend
-        time: time, // Tetap pakai time dari frontend
+        mood: mood,
+        time: time,
         
         // Data hasil pemikiran Gemini
         title: backendData.title,
@@ -109,12 +109,12 @@ const AIGenerator = ({ concept, setConcept }) => {
         // Gambar yang sudah di-generate URL-nya oleh backend
         images: backendData.images,
         
-        // Simpan prompt asli untuk fitur "Copy Prompt"
+        // ⬇️ PERBAIKAN DI SINI: Modifikasi prompt agar unik per tombol ⬇️
         prompts: { 
-            cinematic: backendData.image_prompt,
-            palette: backendData.image_prompt,
-            angle: backendData.image_prompt,
-            blueprint: backendData.image_prompt
+            cinematic: basePrompt + ", cinematic view, detailed lighting, 8k render, photorealistic",
+            palette: basePrompt + ", flat lay block palette style, organized grid, white background, material breakdown",
+            angle: basePrompt + ", isometric view, 3d render, cute style, clear details, white background",
+            blueprint: basePrompt + ", blueprint schematic style, blue background, technical drawing, white lines, top down view"
         }
       });
 
