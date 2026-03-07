@@ -365,46 +365,74 @@ const AIGenerator = ({ concept, setConcept }) => {
           {/* Visual Outputs */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
-              { key: 'cinematic', label: 'Main Cinematic View', icon: ImageIcon },
-              { key: 'palette', label: 'Block Palette Layout', icon: ImageIcon },
-              { key: 'angle', label: 'Isometric View', icon: ImageIcon },
-              { key: 'blueprint', label: 'Blueprint Schematic', icon: ImageIcon }
+              { key: 'cinematic', label: 'Main Cinematic View', icon: ImageIcon, description: 'Epic cinematic render' },
+              { key: 'palette', label: 'Block Palette Layout', icon: ImageIcon, description: 'Material breakdown' },
+              { key: 'angle', label: 'Isometric View', icon: ImageIcon, description: 'Technical 3D view' },
+              { key: 'blueprint', label: 'Blueprint Schematic', icon: ImageIcon, description: 'Top-down diagram' }
             ].map((view) => {
               const Icon = view.icon;
               return (
-                <Card key={view.key} className="bg-black/40 border-emerald-800/30 backdrop-blur-sm">
+                <Card key={view.key} className="bg-black/40 border-emerald-800/30 backdrop-blur-sm hover:border-emerald-600/50 transition-colors">
                   <CardHeader>
                     <CardTitle className="text-white text-sm flex items-center gap-2">
                       <Icon className="w-4 h-4 text-emerald-400" />
                       {view.label}
                     </CardTitle>
+                    <CardDescription className="text-stone-500 text-xs">
+                      {view.description}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    <div className="relative overflow-hidden rounded-lg bg-black/60 aspect-[4/3]">
+                    <div className="relative overflow-hidden rounded-lg bg-black/60 aspect-[16/9] border border-emerald-800/20 group">
                       {isGenerating ? (
                         <div className="w-full h-full flex items-center justify-center">
                           <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
                         </div>
+                      ) : concept.images?.[view.key] ? (
+                        <>
+                          <img
+                            src={concept.images[view.key]}
+                            alt={view.label}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            onError={(e) => {
+                              e.target.src = 'https://via.placeholder.com/1024x576/1f2937/10b981?text=Image+Loading...';
+                              e.target.className = 'w-full h-full object-cover opacity-50';
+                            }}
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        </>
                       ) : (
-                        <img
-                          src={concept.images[view.key]}
-                          alt={view.label}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            e.target.src = 'https://via.placeholder.com/800x600/1f2937/10b981?text=Loading...';
-                          }}
-                        />
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-emerald-900/10 to-stone-900/10">
+                          <div className="text-center">
+                            <ImageIcon className="w-8 h-8 text-emerald-400/50 mx-auto mb-2" />
+                            <p className="text-stone-500 text-sm">No image generated</p>
+                          </div>
+                        </div>
                       )}
                     </div>
-                    <Button
-                      onClick={() => handleCopyPrompt(view.key)}
-                      variant="outline"
-                      size="sm"
-                      className="w-full border-emerald-700 text-emerald-400 hover:bg-emerald-900/30"
-                    >
-                      <Copy className="w-3 h-3 mr-2" />
-                      Copy Prompt
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleCopyPrompt(view.key)}
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 border-emerald-700 text-emerald-400 hover:bg-emerald-900/30"
+                        disabled={!concept.prompts?.[view.key]}
+                      >
+                        <Copy className="w-3 h-3 mr-2" />
+                        Copy Prompt
+                      </Button>
+                      {concept.images?.[view.key] && (
+                        <Button
+                          onClick={() => window.open(concept.images[view.key], '_blank')}
+                          variant="outline"
+                          size="sm"
+                          className="flex-1 border-emerald-700 text-emerald-400 hover:bg-emerald-900/30"
+                        >
+                          <Download className="w-3 h-3 mr-2" />
+                          Open Full
+                        </Button>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               );
