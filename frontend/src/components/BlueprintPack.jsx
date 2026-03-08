@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { FileText, Layers, Package, Lightbulb, Download, AlertCircle } from 'lucide-react';
+import { FileText, Layers, Package, Lightbulb, Download, AlertCircle, FileCode } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 
 const BlueprintPack = ({ concept }) => {
@@ -49,10 +49,44 @@ const BlueprintPack = ({ concept }) => {
     link.click();
     URL.revokeObjectURL(url);
 
-    toast({
-      title: "Blueprint Exported",
-      description: "Blueprint data saved successfully.",
-    });
+  const handleExportSchematic = async () => {
+    try {
+      const BACKEND_URL = "https://nazure02-minecraft-db.hf.space/api/schematic-export";
+
+      const response = await fetch(BACKEND_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          build_concept: concept,
+          format: "schem"
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      toast({
+        title: "Schematic Export Ready",
+        description: `Schematic file prepared: ${data.file_size}`,
+      });
+
+      // In a real implementation, this would download the actual .schem file
+      // For now, we'll show the metadata
+      console.log("Schematic data:", data.schematic_data);
+
+    } catch (error) {
+      console.error("Schematic Export Error:", error);
+      toast({
+        title: "Export Failed",
+        description: "Could not export schematic file.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getEstimatedTime = (scale, difficulty) => {
@@ -79,13 +113,23 @@ const BlueprintPack = ({ concept }) => {
               Detailed construction guide for {concept.title}
             </p>
           </div>
-          <Button
-            onClick={handleExportBlueprint}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              onClick={handleExportBlueprint}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Export Blueprint
+            </Button>
+            <Button
+              onClick={handleExportSchematic}
+              variant="outline"
+              className="border-emerald-800/30 text-emerald-300 hover:bg-emerald-900/50"
+            >
+              <FileCode className="w-4 h-4 mr-2" />
+              Export Schematic
+            </Button>
+          </div>
         </div>
       </div>
 

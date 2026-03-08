@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
 import './App.css';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
-import { Home, Image, Wand2, Circle, FileText } from 'lucide-react';
+import { Home, Image, Wand2, Circle, FileText, Map, Target, Blocks, Ruler, Blueprint, Download, Zap, BookOpen, PenTool } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import Gallery from './components/Gallery';
 import AIGenerator from './components/AIGenerator';
 import CircleTool from './components/CircleTool';
 import BlueprintPack from './components/BlueprintPack';
+import BiomePlanner from './components/BiomePlanner';
+import DifficultyAnalyzer from './components/DifficultyAnalyzer';
+import BlockPalette from './components/BlockPalette';
+import SizeCalculator from './components/SizeCalculator';
+import RedstonePlanner from './components/RedstonePlanner';
+import PromptBuilder from './components/PromptBuilder';
 import { Toaster } from './components/ui/toaster';
 
 function App() {
@@ -38,40 +44,82 @@ function App() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 bg-black/30 backdrop-blur-sm border border-emerald-800/30 p-1 mb-8">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 gap-1 bg-black/30 backdrop-blur-sm border border-emerald-800/30 p-1 mb-8">
             <TabsTrigger 
               value="dashboard" 
-              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-xs lg:text-sm"
             >
-              <Home className="w-4 h-4" />
+              <Home className="w-3 h-3 lg:w-4 lg:h-4" />
               <span className="hidden sm:inline">Dashboard</span>
             </TabsTrigger>
             <TabsTrigger 
-              value="gallery" 
-              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+              value="gallery"
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-xs lg:text-sm"
             >
-              <Image className="w-4 h-4" />
+              <Image className="w-3 h-3 lg:w-4 lg:h-4" />
               <span className="hidden sm:inline">Gallery</span>
             </TabsTrigger>
             <TabsTrigger 
               value="generator" 
-              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-xs lg:text-sm"
             >
-              <Wand2 className="w-4 h-4" />
-              <span className="hidden sm:inline">AI Generator</span>
+              <Wand2 className="w-3 h-3 lg:w-4 lg:h-4" />
+              <span className="hidden sm:inline">AI Gen</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="biome" 
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-xs lg:text-sm"
+            >
+              <Map className="w-3 h-3 lg:w-4 lg:h-4" />
+              <span className="hidden sm:inline">Biome</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="difficulty" 
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-xs lg:text-sm"
+            >
+              <Target className="w-3 h-3 lg:w-4 lg:h-4" />
+              <span className="hidden sm:inline">Difficulty</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="palette" 
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-xs lg:text-sm"
+            >
+              <Blocks className="w-3 h-3 lg:w-4 lg:h-4" />
+              <span className="hidden sm:inline">Palette</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="size" 
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-xs lg:text-sm"
+            >
+              <Ruler className="w-3 h-3 lg:w-4 lg:h-4" />
+              <span className="hidden sm:inline">Size</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="redstone" 
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-xs lg:text-sm"
+            >
+              <Zap className="w-3 h-3 lg:w-4 lg:h-4" />
+              <span className="hidden sm:inline">Redstone</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="prompt" 
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-xs lg:text-sm"
+            >
+              <PenTool className="w-3 h-3 lg:w-4 lg:h-4" />
+              <span className="hidden sm:inline">Prompt</span>
             </TabsTrigger>
             <TabsTrigger 
               value="circle" 
-              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-xs lg:text-sm"
             >
-              <Circle className="w-4 h-4" />
-              <span className="hidden sm:inline">Circle Tool</span>
+              <Circle className="w-3 h-3 lg:w-4 lg:h-4" />
+              <span className="hidden sm:inline">Circle</span>
             </TabsTrigger>
             <TabsTrigger 
               value="blueprint" 
-              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white text-xs lg:text-sm"
             >
-              <FileText className="w-4 h-4" />
+              <FileText className="w-3 h-3 lg:w-4 lg:h-4" />
               <span className="hidden sm:inline">Blueprint</span>
             </TabsTrigger>
           </TabsList>
@@ -86,6 +134,30 @@ function App() {
 
           <TabsContent value="generator">
             <AIGenerator concept={concept} setConcept={setConcept} />
+          </TabsContent>
+
+          <TabsContent value="biome">
+            <BiomePlanner />
+          </TabsContent>
+
+          <TabsContent value="difficulty">
+            <DifficultyAnalyzer concept={concept} />
+          </TabsContent>
+
+          <TabsContent value="palette">
+            <BlockPalette concept={concept} />
+          </TabsContent>
+
+          <TabsContent value="size">
+            <SizeCalculator />
+          </TabsContent>
+
+          <TabsContent value="redstone">
+            <RedstonePlanner />
+          </TabsContent>
+
+          <TabsContent value="prompt">
+            <PromptBuilder />
           </TabsContent>
 
           <TabsContent value="circle">
