@@ -1,5 +1,19 @@
 import React, { useMemo, useState } from 'react';
 import './App.css';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
+import { Home, Image, Wand2, Circle, FileText, Map, Target, Blocks, Ruler, Blueprint, Download, Zap, BookOpen, PenTool } from 'lucide-react';
+import Dashboard from './components/Dashboard';
+import Gallery from './components/Gallery';
+import AIGenerator from './components/AIGenerator';
+import CircleTool from './components/CircleTool';
+import BlueprintPack from './components/BlueprintPack';
+import BiomePlanner from './components/BiomePlanner';
+import DifficultyAnalyzer from './components/DifficultyAnalyzer';
+import BlockPalette from './components/BlockPalette';
+import SizeCalculator from './components/SizeCalculator';
+import RedstonePlanner from './components/RedstonePlanner';
+import PromptBuilder from './components/PromptBuilder';
+import { Toaster } from './components/ui/toaster';
 import {
   Wand2,
   Trees,
@@ -500,374 +514,67 @@ function App() {
         </div>
       </header>
 
-      <main className="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
-        <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-3xl border border-emerald-700/20 bg-black/30 p-6 backdrop-blur-sm">
-            <div className="mb-5 flex items-center gap-3">
-              <Wand2 className="h-5 w-5 text-emerald-300" />
-              <div>
-                <h2 className="text-2xl font-semibold">Command Center</h2>
-                <p className="text-sm text-stone-300">Atur konsep, biome, difficulty, blueprint, dan redstone dalam satu flow.</p>
-              </div>
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <label className="space-y-2">
-                <span className="text-sm text-stone-300">Build Type</span>
-                <select
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 outline-none"
-                  value={form.buildType}
-                  onChange={(e) => setForm({ ...form, buildType: e.target.value })}
-                >
-                  {BUILD_TYPES.map((item) => (
-                    <option key={item} value={item} className="bg-stone-900">
-                      {item}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="space-y-2">
-                <span className="text-sm text-stone-300">Style</span>
-                <select
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 outline-none"
-                  value={form.style}
-                  onChange={(e) => setForm({ ...form, style: e.target.value })}
-                >
-                  {STYLES.map((item) => (
-                    <option key={item.id} value={item.id} className="bg-stone-900">
-                      {item.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="space-y-2">
-                <span className="text-sm text-stone-300">Biome</span>
-                <select
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 outline-none"
-                  value={form.biome}
-                  onChange={(e) => setForm({ ...form, biome: e.target.value })}
-                >
-                  {BIOMES.map((item) => (
-                    <option key={item.id} value={item.id} className="bg-stone-900">
-                      {item.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="space-y-2">
-                <span className="text-sm text-stone-300">Size Tier</span>
-                <select
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 outline-none"
-                  value={form.size}
-                  onChange={(e) => setForm({ ...form, size: e.target.value })}
-                >
-                  {['compact', 'medium', 'large', 'mega'].map((item) => (
-                    <option key={item} value={item} className="bg-stone-900">
-                      {item.toUpperCase()}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label className="space-y-2 md:col-span-2">
-                <span className="text-sm text-stone-300">Main Goal</span>
-                <input
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 outline-none"
-                  value={form.goal}
-                  onChange={(e) => setForm({ ...form, goal: e.target.value })}
-                  placeholder="Efficient long-term survival"
-                />
-              </label>
-
-              <label className="space-y-2 md:col-span-2">
-                <span className="text-sm text-stone-300">Custom Idea</span>
-                <textarea
-                  className="min-h-[96px] w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 outline-none"
-                  value={form.customIdea}
-                  onChange={(e) => setForm({ ...form, customIdea: e.target.value })}
-                  placeholder="Describe the fantasy or practical vibe you want."
-                />
-              </label>
-
-              <label className="space-y-2">
-                <span className="text-sm text-stone-300">Mood</span>
-                <input
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 outline-none"
-                  value={form.mood}
-                  onChange={(e) => setForm({ ...form, mood: e.target.value })}
-                />
-              </label>
-
-              <label className="space-y-2">
-                <span className="text-sm text-stone-300">Orientation</span>
-                <input
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 outline-none"
-                  value={form.orientation}
-                  onChange={(e) => setForm({ ...form, orientation: e.target.value })}
-                />
-              </label>
-
-              <label className="space-y-2">
-                <span className="text-sm text-stone-300">Redstone Focus</span>
-                <input
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-3 outline-none"
-                  value={form.redstoneFocus}
-                  onChange={(e) => setForm({ ...form, redstoneFocus: e.target.value })}
-                />
-              </label>
-
-              <label className="space-y-2">
-                <span className="text-sm text-stone-300">Automation Level: {form.automationLevel}</span>
-                <input
-                  type="range"
-                  min="1"
-                  max="4"
-                  value={form.automationLevel}
-                  onChange={(e) => setForm({ ...form, automationLevel: Number(e.target.value) })}
-                  className="w-full accent-emerald-400"
-                />
-              </label>
-            </div>
-
-            <div className="mt-5 flex flex-wrap gap-3">
-              <button
-                onClick={handleGenerate}
-                className="rounded-xl bg-emerald-500 px-5 py-3 font-semibold text-stone-950 transition hover:bg-emerald-400"
-              >
-                Generate Toolkit Plan
-              </button>
-              <button
-                onClick={handleExportBlueprint}
-                className="rounded-xl border border-white/15 bg-white/5 px-5 py-3 font-semibold transition hover:bg-white/10"
-              >
-                Export Blueprint JSON
-              </button>
-              <button
-                onClick={handleExportSchematicPack}
-                className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-5 py-3 font-semibold text-emerald-200 transition hover:bg-emerald-500/15"
-              >
-                Export Schematic Pack
-              </button>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-emerald-500/15 to-amber-500/10 p-6">
-              <p className="mb-2 text-xs uppercase tracking-[0.3em] text-emerald-300">AI Prompt Builder</p>
-              <h2 className="mb-3 text-2xl font-semibold">{concept.title}</h2>
-              <p className="mb-4 text-sm text-stone-200">{concept.summary}</p>
-              <div className="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm leading-7 text-stone-200">
-                {promptText}
-              </div>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2">
-              <StatPill icon={Sword} label="Difficulty" value={`${concept.difficulty.label} (${concept.difficulty.score})`} />
-              <StatPill icon={Ruler} label="Dimensions" value={`${plannerInsights.dimensions.width} x ${plannerInsights.dimensions.length} x ${plannerInsights.dimensions.height}`} />
-              <StatPill icon={Layers3} label="Floors" value={concept.blueprint.floors} />
-              <StatPill icon={Pickaxe} label="Build Time" value={`${plannerInsights.buildTime} in-game min`} />
-            </div>
-
-            <div className="rounded-3xl border border-white/10 bg-black/30 p-6">
-              <p className="mb-3 text-xs uppercase tracking-[0.25em] text-emerald-300">Planner Highlights</p>
-              <ul className="space-y-3 text-sm text-stone-200">
-                <li>• {plannerInsights.terrainNote}</li>
-                <li>• {plannerInsights.survivalReadiness}</li>
-                <li>• Volume budget: {plannerInsights.volume.toLocaleString()} blocks</li>
-                <li>• Best visual identity: {styleMeta.silhouette}</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section className="grid gap-6 md:grid-cols-2 xl:grid-cols-5">
-          {topFeatures.map((feature) => {
-            const Icon = feature.icon;
-            return (
-              <div key={feature.label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-white/5">
-                  <Icon className="h-5 w-5 text-emerald-300" />
-                </div>
-                <h3 className="font-semibold">{feature.label}</h3>
-                <p className="mt-2 text-sm text-stone-300">{feature.desc}</p>
-              </div>
-            );
-          })}
-        </section>
-
-        <section className="grid gap-6 xl:grid-cols-3">
-          <div className="space-y-6 xl:col-span-2">
-            <SectionCard icon={Map} title="Biome Build Planner" eyebrow="Planning System">
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <div className="mb-3 flex items-center gap-3">
-                    <biomeMeta.icon className="h-5 w-5 text-emerald-300" />
-                    <h3 className="font-semibold">{biomeMeta.label}</h3>
-                  </div>
-                  <p className="text-sm text-stone-300">Climate: {biomeMeta.climate}</p>
-                  <p className="text-sm text-stone-300">Terrain: {biomeMeta.terrain}</p>
-                  <p className="mt-3 text-sm text-stone-300">Recommended styles: {biomeMeta.styles.join(', ')}</p>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <p className="mb-2 text-sm font-semibold text-white">Adaptation Notes</p>
-                  <ul className="space-y-2 text-sm text-stone-300">
-                    {biomeMeta.risks.map((risk) => (
-                      <li key={risk}>• Mitigate {risk} with layered access, lighting, and terrain shaping.</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </SectionCard>
-
-            <SectionCard icon={ClipboardList} title="Blueprint Generator" eyebrow="Building Tools">
-              <div className="grid gap-3">
-                {concept.blueprint.layers.map((layer) => (
-                  <div key={layer.level} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <div>
-                        <h3 className="font-semibold">Level {layer.level}: {layer.purpose}</h3>
-                        <p className="text-sm text-stone-300">Footprint {layer.footprint} • Height {layer.height}</p>
-                      </div>
-                      <div className="rounded-xl bg-emerald-500/10 px-3 py-2 text-sm text-emerald-200">
-                        Phase {layer.level}
-                      </div>
-                    </div>
-                    <p className="mt-3 text-sm text-stone-300">{layer.notes}</p>
-                  </div>
-                ))}
-              </div>
-            </SectionCard>
-
-            <SectionCard icon={CircuitBoard} title="Redstone Planner" eyebrow="Advanced Tools">
-              <div className="grid gap-3">
-                {concept.redstone.map((system) => (
-                  <div key={system.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <h3 className="font-semibold">{system.title}</h3>
-                      <span className="rounded-full bg-amber-500/10 px-3 py-1 text-xs uppercase tracking-[0.16em] text-amber-200">
-                        {system.complexity}
-                      </span>
-                    </div>
-                    <p className="mt-3 text-sm text-stone-300">{system.description}</p>
-                    <p className="mt-3 text-xs uppercase tracking-[0.2em] text-stone-400">
-                      {system.parts.join(' • ')}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </SectionCard>
-          </div>
-
-          <div className="space-y-6">
-            <SectionCard icon={Sword} title="Difficulty Analyzer" eyebrow="Planning System">
-              <div className="space-y-3">
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <p className="text-sm text-stone-300">Recommended for players who can handle:</p>
-                  <p className="mt-2 text-xl font-semibold">{concept.difficulty.label}</p>
-                  <p className="mt-2 text-sm text-stone-300">
-                    Score {concept.difficulty.score} combines size, biome danger, style complexity, and automation level.
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-stone-300">
-                  {concept.difficulty.label === 'Easy' && 'Great for starter bases, quick builds, and solo survival players.'}
-                  {concept.difficulty.label === 'Medium' && 'Balanced challenge with some logistics and decorative planning.'}
-                  {concept.difficulty.label === 'Hard' && 'Expect terrain shaping, material runs, and multi-phase execution.'}
-                  {concept.difficulty.label === 'Expert' && 'Best for advanced builders who enjoy large automation and showcase projects.'}
-                </div>
-              </div>
-            </SectionCard>
-
-            <SectionCard
-              icon={Palette}
-              title="Block Palette Generator"
-              eyebrow="Building Tools"
-              rightSlot={
-                <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs uppercase tracking-[0.18em] text-emerald-200">
-                  {concept.palette.length} blocks
-                </span>
-              }
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-5 bg-black/30 backdrop-blur-sm border border-emerald-800/30 p-1 mb-8">
+            <TabsTrigger 
+              value="dashboard" 
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
             >
-              <div className="space-y-2">
-                {concept.palette.map((entry) => (
-                  <div key={entry.block} className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-sm">
-                    <div>
-                      <p className="font-medium text-white">{titleCase(entry.block)}</p>
-                      <p className="text-stone-400">{entry.role}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold text-emerald-200">{entry.stackEstimate} stacks</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </SectionCard>
+              <Home className="w-4 h-4" />
+              <span className="hidden sm:inline">Dashboard</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="gallery" 
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+            >
+              <Image className="w-4 h-4" />
+              <span className="hidden sm:inline">Gallery</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="generator" 
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+            >
+              <Wand2 className="w-4 h-4" />
+              <span className="hidden sm:inline">AI Generator</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="circle" 
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+            >
+              <Circle className="w-4 h-4" />
+              <span className="hidden sm:inline">Circle Tool</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="blueprint" 
+              className="flex items-center space-x-2 data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+            >
+              <FileText className="w-4 h-4" />
+              <span className="hidden sm:inline">Blueprint</span>
+            </TabsTrigger>
+          </TabsList>
 
-            <SectionCard icon={Ruler} title="Build Size Calculator" eyebrow="Planning System">
-              <div className="grid gap-3">
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-stone-300">
-                  <p>Footprint: {plannerInsights.dimensions.width} × {plannerInsights.dimensions.length}</p>
-                  <p>Height budget: {plannerInsights.dimensions.height} blocks</p>
-                  <p>Estimated volume: {plannerInsights.volume.toLocaleString()} blocks</p>
-                  <p>Orientation: {form.orientation}</p>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-stone-300">
-                  <p className="mb-2 font-semibold text-white">Spacing Recommendation</p>
-                  Leave at least {Math.round(plannerInsights.dimensions.width * 0.35)} blocks of buffer around the build for paths, terraforming, and expansion modules.
-                </div>
-              </div>
-            </SectionCard>
-          </div>
-        </section>
+          <TabsContent value="dashboard">
+            <Dashboard onNavigate={setActiveTab} concept={concept} />
+          </TabsContent>
 
-        <section className="grid gap-6 xl:grid-cols-[1fr_1.2fr]">
-          <SectionCard icon={GalleryHorizontal} title="Inspiration Gallery" eyebrow="Community System">
-            <div className="grid gap-3">
-              {GALLERY_ITEMS.map((item) => (
-                <div key={item.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <h3 className="font-semibold">{item.title}</h3>
-                    <span className="rounded-full bg-white/5 px-3 py-1 text-xs uppercase tracking-[0.16em] text-stone-300">
-                      {item.difficulty}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm text-stone-300">{item.biome} • {item.style} • {item.size}</p>
-                  <p className="mt-3 text-sm text-stone-300">{item.vibe}</p>
-                </div>
-              ))}
-            </div>
-          </SectionCard>
+          <TabsContent value="gallery">
+            <Gallery onNavigate={setActiveTab} setConcept={setConcept} />
+          </TabsContent>
 
-          <SectionCard icon={Package} title="Builder Output Summary" eyebrow="Generator System">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="mb-2 text-sm font-semibold text-white">Generated Summary</p>
-                <p className="text-sm leading-7 text-stone-300">{concept.summary}</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="mb-2 text-sm font-semibold text-white">Landmarks</p>
-                <ul className="space-y-2 text-sm text-stone-300">
-                  {concept.blueprint.landmarks.map((item) => (
-                    <li key={item}>• {item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4 md:col-span-2">
-                <p className="mb-2 text-sm font-semibold text-white">Builder Tips</p>
-                <ul className="grid gap-2 text-sm text-stone-300 md:grid-cols-2">
-                  {concept.builderTips.map((tip) => (
-                    <li key={tip} className="rounded-xl border border-white/10 bg-black/20 px-3 py-3">
-                      <CheckCircle2 className="mr-2 inline h-4 w-4 text-emerald-300" />
-                      {tip}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </SectionCard>
-        </section>
+          <TabsContent value="generator">
+            <AIGenerator concept={concept} setConcept={setConcept} />
+          </TabsContent>
+
+          <TabsContent value="circle">
+            <CircleTool circleConfig={circleConfig} setCircleConfig={setCircleConfig} />
+          </TabsContent>
+
+          <TabsContent value="blueprint">
+            <BlueprintPack concept={concept} />
+          </TabsContent>
+        </Tabs>
       </main>
 
       <footer className="border-t border-emerald-700/20 bg-black/25">
