@@ -1,19 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import './App.css';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
-import { Home, Image, Wand2, Circle, FileText, Map, Target, Blocks, Ruler, Blueprint, Download, Zap, BookOpen, PenTool } from 'lucide-react';
-import Dashboard from './components/Dashboard';
-import Gallery from './components/Gallery';
-import AIGenerator from './components/AIGenerator';
-import CircleTool from './components/CircleTool';
-import BlueprintPack from './components/BlueprintPack';
-import BiomePlanner from './components/BiomePlanner';
-import DifficultyAnalyzer from './components/DifficultyAnalyzer';
-import BlockPalette from './components/BlockPalette';
-import SizeCalculator from './components/SizeCalculator';
-import RedstonePlanner from './components/RedstonePlanner';
-import PromptBuilder from './components/PromptBuilder';
-import { Toaster } from './components/ui/toaster';
 import {
   Wand2,
   Trees,
@@ -22,7 +8,6 @@ import {
   Waves,
   Flame,
   Castle,
-  Hammer,
   Palette,
   Ruler,
   Map,
@@ -30,14 +15,11 @@ import {
   CircuitBoard,
   Sparkles,
   ScrollText,
-  Blocks,
   GalleryHorizontal,
   ClipboardList,
   Compass,
   Sword,
-  Home,
   Pickaxe,
-  Zap,
   CheckCircle2,
   Package,
   Layers3
