@@ -34,3 +34,18 @@ export async function createBuild(data: {
 
   return res.json();
 }
+
+export async function deleteBuild(id: number) {
+  const res = await fetch(`${apiUrl}/api/builds/${id}`, {
+    method: "DELETE"
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({
+      message: "Failed to delete build"
+    }));
+    throw new Error(error.message || "Failed to delete build");
+  }
+
+  return res.json();
+}

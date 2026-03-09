@@ -1,8 +1,17 @@
 import BuildForm from "./build-form";
+import DeleteBuildButton from "./delete-build-button";
 import { getBuilds } from "@/lib/api";
 
+type Build = {
+  id: number;
+  title: string;
+  style: string;
+  biome: string;
+  createdAt: string;
+};
+
 export default async function Home() {
-  const builds = await getBuilds().catch(() => []);
+  const builds: Build[] = await getBuilds().catch(() => []);
 
   return (
     <main
@@ -32,13 +41,17 @@ export default async function Home() {
           <p>Belum ada data build.</p>
         ) : (
           <ul style={{ paddingLeft: "20px" }}>
-            {builds.map((build: any) => (
-              <li key={build.id} style={{ marginBottom: "12px" }}>
+            {builds.map((build) => (
+              <li key={build.id} style={{ marginBottom: "16px" }}>
                 <strong>{build.title}</strong>
                 <br />
                 Style: {build.style}
                 <br />
                 Biome: {build.biome}
+                <br />
+                Dibuat: {new Date(build.createdAt).toLocaleString()}
+                <br />
+                <DeleteBuildButton id={build.id} />
               </li>
             ))}
           </ul>

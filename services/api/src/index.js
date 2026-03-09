@@ -1,11 +1,33 @@
 import express from "express";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(express.json());
 
-const builds = [];
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const dataFilePath = path.join(__dirname, "../data/builds.json");
+
+function readBuilds() {
+  try {
+    if (!fs.existsSync(dataFilePath)) {
+      fs.writeFileSync(dataFilePath, "[]", "utf-8");
+    }
+
+    const raw = fs.readFileSync(dataFilePath, "utf-8");
+    return JSON.parse(raw);
+  } catch {
+    return [];
+  }
+}
+
+function writeBuilds(builds) {
+  fs.writeFileSync(dataFilePath, JSON.stringify(builds, null, 2), "utf-8");
+}
 
 app.get("/health", (_, res) => {
   res.json({
@@ -29,7 +51,21 @@ app.get("/api/app", (_, res) => {
 });
 
 app.get("/api/builds", (_, res) => {
+  const builds = readBuilds();
   res.json(builds);
+});
+
+app.get("/api/builds/:id", (req, res) => {
+  const builds = readBuilds();
+  const build = builds.find((item) => String(item.id) === req.params.id);
+
+  if (!build) {
+    return res.status(404).json({
+      message: "Build tidak ditemukan"
+    });
+  }
+
+  res.json(build);
 });
 
 app.post("/api/builds", (req, res) => {
@@ -41,6 +77,8 @@ app.post("/api/builds", (req, res) => {
     });
   }
 
+  const builds = readBuilds();
+
   const newBuild = {
     id: Date.now(),
     title,
@@ -50,8 +88,26 @@ app.post("/api/builds", (req, res) => {
   };
 
   builds.unshift(newBuild);
+  writeBuilds(builds);
 
   res.status(201).json(newBuild);
+});
+
+app.delete("/api/builds/:id", (req, res) => {
+  const builds = readBuilds();
+  const nextBuilds = builds.filter((item) => String(item.id) !== req.params.id);
+
+  if (nextBuilds.length === builds.length) {
+    return res.status(404).json({
+      message: "Build tidak ditemukan"
+    });
+  }
+
+  writeBuilds(nextBuilds);
+
+  res.json({
+    message: "Build berhasil dihapus"
+  });
 });
 
 app.listen(port, () => {
