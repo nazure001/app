@@ -1,7 +1,8 @@
 node_modules
-dist
+.pnpm-store
 .next
+dist
+coverage
 .env
 .env.local
-coverage
-pnpm-lock.yaml
+.turbo

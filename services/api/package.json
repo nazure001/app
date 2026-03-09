@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "lint": "node -e \"console.log('no lint yet')\"",
+    "test": "node -e \"console.log('no test yet')\"",
+    "check-types": "node -e \"console.log('no types yet')\"",
+    "clean": "rimraf node_modules"
   },
   "dependencies": {
     "express": "^4.21.2"
