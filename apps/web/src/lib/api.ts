@@ -1,6 +1,8 @@
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export async function getBuilds() {
+  if (!apiUrl) return [];
+
   const res = await fetch(`${apiUrl}/api/builds`, {
     cache: "no-store"
   });
@@ -17,6 +19,10 @@ export async function createBuild(data: {
   style: string;
   biome: string;
 }) {
+  if (!apiUrl) {
+    throw new Error("API URL belum dikonfigurasi");
+  }
+
   const res = await fetch(`${apiUrl}/api/builds`, {
     method: "POST",
     headers: {
@@ -36,6 +42,10 @@ export async function createBuild(data: {
 }
 
 export async function deleteBuild(id: number) {
+  if (!apiUrl) {
+    throw new Error("API URL belum dikonfigurasi");
+  }
+
   const res = await fetch(`${apiUrl}/api/builds/${id}`, {
     method: "DELETE"
   });
