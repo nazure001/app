@@ -1,27 +1,8 @@
-const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-
-async function getAppData() {
-  try {
-    const res = await fetch(`${apiUrl}/api/app`, {
-      cache: "no-store"
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch app data");
-    }
-
-    return res.json();
-  } catch {
-    return {
-      name: "Unknown App",
-      version: "-",
-      status: "api not connected"
-    };
-  }
-}
+import BuildForm from "./build-form";
+import { getBuilds } from "@/lib/api";
 
 export default async function Home() {
-  const data = await getAppData();
+  const builds = await getBuilds().catch(() => []);
 
   return (
     <main
@@ -35,7 +16,9 @@ export default async function Home() {
       <h1>App Monorepo</h1>
       <p>Frontend Next.js sudah terhubung ke backend Express.</p>
 
-      <div
+      <BuildForm />
+
+      <section
         style={{
           marginTop: "24px",
           padding: "20px",
@@ -43,17 +26,24 @@ export default async function Home() {
           borderRadius: "12px"
         }}
       >
-        <h2>App Info</h2>
-        <p>
-          <strong>Name:</strong> {data.name}
-        </p>
-        <p>
-          <strong>Version:</strong> {data.version}
-        </p>
-        <p>
-          <strong>Status:</strong> {data.status}
-        </p>
-      </div>
+        <h2>Daftar Build</h2>
+
+        {builds.length === 0 ? (
+          <p>Belum ada data build.</p>
+        ) : (
+          <ul style={{ paddingLeft: "20px" }}>
+            {builds.map((build: any) => (
+              <li key={build.id} style={{ marginBottom: "12px" }}>
+                <strong>{build.title}</strong>
+                <br />
+                Style: {build.style}
+                <br />
+                Biome: {build.biome}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </main>
   );
 }
