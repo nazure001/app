@@ -1,3 +1,10 @@
 # App Monorepo
 
-Initial bootstrap structure.
+## Packages
+- apps/web
+- services/api
+- packages/utils
+
+## Run
+pnpm install
+pnpm dev
