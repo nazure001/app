@@ -1,10 +1,20 @@
 # App Monorepo
 
-## Packages
-- apps/web
-- services/api
-- packages/utils
+Monorepo starter menggunakan:
 
-## Run
+- pnpm workspace
+- Turborepo
+- Next.js untuk web
+- Express untuk API
+
+## Struktur
+
+- `apps/web` → frontend
+- `services/api` → backend
+- `packages/utils` → shared utilities
+
+## Menjalankan project
+
+```bash
 pnpm install
 pnpm dev
